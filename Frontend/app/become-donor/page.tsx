@@ -2,9 +2,9 @@
 
 import React from "react";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
 import { DashboardNav } from "@/components/dashboard-nav";
-import { ProtectedRoute } from "@/components/protected-route";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -87,7 +87,7 @@ const urgencyConfig = {
 };
 
 function BecomeDonorContent() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [requests, setRequests] = useState<BloodRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -166,9 +166,35 @@ function BecomeDonorContent() {
     });
   };
 
+  // Public header for non-authenticated users
+  const PublicHeader = () => (
+    <header className="sticky top-0 z-50 bg-background border-b border-border">
+      <div className="container mx-auto px-4">
+        <div className="h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <Droplet className="w-7 h-7 text-primary" />
+            <span className="text-lg font-bold text-foreground">
+              Blood<span className="text-primary">Connect</span>
+            </span>
+          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/login">
+              <Button variant="outline" size="sm">
+                Login
+              </Button>
+            </Link>
+            <Link href="/register">
+              <Button size="sm">Register</Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+
   return (
     <div className="min-h-screen bg-muted/30">
-      <DashboardNav />
+      {isAuthenticated ? <DashboardNav /> : <PublicHeader />}
 
       <main className="container mx-auto px-4 py-8">
         {/* Page Header */}
@@ -366,7 +392,13 @@ function BecomeDonorContent() {
                   </CardContent>
 
                   <CardFooter>
-                    {isOwnRequest ? (
+                    {!isAuthenticated ? (
+                      <Link href="/login" className="w-full">
+                        <Button variant="outline" className="w-full bg-transparent">
+                          Login to Donate
+                        </Button>
+                      </Link>
+                    ) : isOwnRequest ? (
                       <Button variant="outline" className="w-full bg-transparent" disabled>
                         Your Request
                       </Button>
@@ -401,9 +433,5 @@ function BecomeDonorContent() {
 }
 
 export default function BecomeDonorPage() {
-  return (
-    <ProtectedRoute>
-      <BecomeDonorContent />
-    </ProtectedRoute>
-  );
+  return <BecomeDonorContent />;
 }

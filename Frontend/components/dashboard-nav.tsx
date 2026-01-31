@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/become-donor", label: "Become a Donor", icon: Heart },
-  { href: "/request", label: "Request Blood", icon: PlusCircle },
+  { href: "/requests", label: "Request Blood", icon: PlusCircle },
   { href: "/profile", label: "My Profile", icon: User },
 ];
 
