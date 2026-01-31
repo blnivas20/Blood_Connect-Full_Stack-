@@ -82,7 +82,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "bloodconnect.wsgi.application"
+# WSGI_APPLICATION = "bloodconnect.wsgi.application"
+
+ASGI_APPLICATION = "bloodconnect.asgi.application"
 
 
 # Database

@@ -7,53 +7,32 @@ from rest_framework.permissions import IsAuthenticated
 from donations.models import Request, AcceptedDonor
 from donations.utils import is_compatible
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import ValidationError
+
 
 class AcceptRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, short_id):
+        blood_request = Request.objects.get(short_id=short_id)
 
-        req = get_object_or_404(Request, short_id=short_id)
+        # ❌ requester cannot accept own request
+        if blood_request.requester == request.user:
+            raise ValidationError("You cannot accept your own request.")
 
-        # ❌ Cannot accept own request
-        if req.requester == request.user:
-            return Response(
-                {"error": "You cannot accept your own request"},
-                status=403
-            )
+        # ❌ donor already accepted this request
+        if AcceptedDonor.objects.filter(
+            request=blood_request,
+            donor=request.user
+        ).exists():
+            raise ValidationError("You have already accepted this request.")
 
-        # ❌ Request already completed
-        if req.status != "Pending":
-            return Response(
-                {"error": "Request is no longer active"},
-                status=400
-            )
-
-        donor_blood = request.user.profile.blood_group
-        needed_blood = req.blood_group
-
-        # ❌ Blood incompatibility
-        if not is_compatible(donor_blood, needed_blood):
-            return Response(
-                {"error": "Blood group not compatible"},
-                status=400
-            )
-
-        donor, created = AcceptedDonor.objects.get_or_create(
-            request=req,
+        AcceptedDonor.objects.create(
+            request=blood_request,
             donor=request.user
         )
 
-        if not created:
-            return Response(
-                {"message": "Already accepted"},
-                status=200
-            )
-
-        return Response(
-            {"message": "Accepted successfully"},
-            status=201
-        )
+        return Response({"message": "You are marked as ready to donate."})
 
 
 

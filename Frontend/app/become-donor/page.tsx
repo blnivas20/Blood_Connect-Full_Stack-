@@ -370,30 +370,39 @@ function BecomeDonorContent() {
 
                   <CardFooter>
                     {!isAuthenticated ? (
-                <Link href="/login" className="w-full">
-                  <Button variant="outline" className="w-full bg-transparent">
-                    Login to Donate
-                  </Button>
-                </Link>
-              ) : (
-                <Button
-                  className="w-full"
-                  onClick={() => handleAcceptRequest(request.short_id)}
-                  disabled={acceptingId === request.short_id}
-                >
-                  {acceptingId === request.short_id ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Accepting...
-                    </>
-                  ) : (
-                    <>
-                      <Heart className="w-4 h-4 mr-2" />
-                      Accept & Donate
-                    </>
-                  )}
-                </Button>
-              )}
+  <Link href="/login" className="w-full">
+    <Button variant="outline" className="w-full bg-transparent">
+      Login to Donate
+    </Button>
+  </Link>
+) : request.can_accept ? (
+  <Button
+    className="w-full"
+    onClick={() => handleAcceptRequest(request.short_id)}
+    disabled={acceptingId === request.short_id}
+  >
+    {acceptingId === request.short_id ? (
+      <>
+        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+        Accepting...
+      </>
+    ) : (
+      <>
+        <Heart className="w-4 h-4 mr-2" />
+        Accept & Donate
+      </>
+    )}
+  </Button>
+) : (
+  <Button
+    className="w-full"
+    variant="outline"
+    disabled
+  >
+    Already Accepted
+  </Button>
+)}
+
 
                   </CardFooter>
                 </Card>
