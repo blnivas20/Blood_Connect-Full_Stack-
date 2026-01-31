@@ -8,7 +8,12 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Request(models.Model):
-
+    
+    STATUS_CHOICES = [
+    ("Pending", "Pending"),
+    ("Success", "Success"),
+    ("Cancelled", "Cancelled"),
+    ]
     BLOOD_GROUPS = [
         ("A+", "A+"), ("A-", "A-"),
         ("B+", "B+"), ("B-", "B-"),
@@ -46,13 +51,14 @@ class Request(models.Model):
 
     status = models.CharField(
         max_length=20,
+        choices=STATUS_CHOICES,
         default="Pending"
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.short_id} | {self.blood_group}"
+        return f"{self.requester.username} -> {self.short_id} | {self.blood_group}"
 
 
 import shortuuid

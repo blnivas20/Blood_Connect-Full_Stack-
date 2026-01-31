@@ -41,50 +41,38 @@ import { cn } from "@/lib/utils";
 
 // Blood request type from API
 interface BloodRequest {
-  id: number;
+  short_id: string;
   requester_name: string;
   patient_name: string;
   patient_age: number;
   blood_group: string;
-  urgency: "critical" | "high" | "medium" | "low";
+  urgency: "Emergency" | "Not Urgent";
   location: string;
   pincode: string;
-  reason: string;
-  contact_phone?: string;
+  reason?: string;
   created_at: string;
-  status: "open" | "fulfilled" | "cancelled";
-  requester: {
-    id: number;
-    username: string;
-  };
+  status: "Pending" | "Success" | "Cancelled";
 }
+
 
 const BLOOD_GROUPS = ["All", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
-const URGENCY_LEVELS = ["All", "critical", "high", "medium", "low"];
+const URGENCY_LEVELS = ["All", "Emergency", "Not Urgent"] as const;
+
 
 const urgencyConfig = {
-  critical: {
-    label: "Critical",
+  Emergency: {
+    label: "Emergency",
     color: "bg-red-100 text-red-700 border-red-200",
     icon: AlertTriangle,
   },
-  high: {
-    label: "High",
-    color: "bg-orange-100 text-orange-700 border-orange-200",
-    icon: AlertCircle,
-  },
-  medium: {
-    label: "Medium",
-    color: "bg-yellow-100 text-yellow-700 border-yellow-200",
-    icon: Clock,
-  },
-  low: {
-    label: "Low",
+  "Not Urgent": {
+    label: "Not Urgent",
     color: "bg-green-100 text-green-700 border-green-200",
     icon: CheckCircle,
   },
-};
+} as const;
+
 
 function BecomeDonorContent() {
   const { user, isAuthenticated } = useAuth();
@@ -94,7 +82,7 @@ function BecomeDonorContent() {
   const [searchLocation, setSearchLocation] = useState("");
   const [selectedBloodGroup, setSelectedBloodGroup] = useState("All");
   const [selectedUrgency, setSelectedUrgency] = useState("All");
-  const [acceptingId, setAcceptingId] = useState<number | null>(null);
+  const [acceptingId, setAcceptingId] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState("");
 
   // Fetch blood requests on mount
@@ -109,7 +97,7 @@ function BecomeDonorContent() {
       const response = await api.get("/requests/");
       // Filter only open requests
       const openRequests = response.data.filter(
-        (req: BloodRequest) => req.status === "open"
+        (req: BloodRequest) => req.status === "Pending"
       );
       setRequests(openRequests);
     } catch (err) {
@@ -138,11 +126,11 @@ function BecomeDonorContent() {
   });
 
   // Accept a blood request
-  const handleAcceptRequest = async (requestId: number) => {
-    setAcceptingId(requestId);
+  const handleAcceptRequest = async (shortId: string) => {
+    setAcceptingId(shortId);
     setSuccessMessage("");
     try {
-      await api.post(`/requests/${requestId}/accept/`);
+      await api.post(`/requests/${shortId}/accept/`);
       setSuccessMessage(
         "You have successfully accepted this request. The requester will be notified."
       );
@@ -308,13 +296,12 @@ function BecomeDonorContent() {
           /* Requests Grid */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredRequests.map((request) => {
-              const urgency = urgencyConfig[request.urgency];
+              const urgency = urgencyConfig[request.urgency] ?? urgencyConfig["Not Urgent"];
               const UrgencyIcon = urgency.icon;
-              const isOwnRequest = request.requester.id === user?.id;
 
               return (
                 <Card
-                  key={request.id}
+                  key={request.short_id}
                   className="hover:shadow-md transition-shadow"
                 >
                   <CardHeader className="pb-3">
@@ -334,7 +321,7 @@ function BecomeDonorContent() {
                       </div>
                       <span
                         className={cn(
-                          "inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border",
+                          "inline-flex items-center gap-2 px-4 py-1 rounded-full text-xs font-medium border whitespace-nowrap",
                           urgency.color
                         )}
                       >
@@ -372,16 +359,6 @@ function BecomeDonorContent() {
                       </span>
                     </div>
 
-                    {/* Contact */}
-                    {request.contact_phone && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Phone className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-foreground">
-                          {request.contact_phone}
-                        </span>
-                      </div>
-                    )}
-
                     {/* Date */}
                     <div className="flex items-center gap-2 text-sm">
                       <Clock className="w-4 h-4 text-muted-foreground" />
@@ -393,34 +370,31 @@ function BecomeDonorContent() {
 
                   <CardFooter>
                     {!isAuthenticated ? (
-                      <Link href="/login" className="w-full">
-                        <Button variant="outline" className="w-full bg-transparent">
-                          Login to Donate
-                        </Button>
-                      </Link>
-                    ) : isOwnRequest ? (
-                      <Button variant="outline" className="w-full bg-transparent" disabled>
-                        Your Request
-                      </Button>
-                    ) : (
-                      <Button
-                        className="w-full"
-                        onClick={() => handleAcceptRequest(request.id)}
-                        disabled={acceptingId === request.id}
-                      >
-                        {acceptingId === request.id ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Accepting...
-                          </>
-                        ) : (
-                          <>
-                            <Heart className="w-4 h-4 mr-2" />
-                            Accept & Donate
-                          </>
-                        )}
-                      </Button>
-                    )}
+                <Link href="/login" className="w-full">
+                  <Button variant="outline" className="w-full bg-transparent">
+                    Login to Donate
+                  </Button>
+                </Link>
+              ) : (
+                <Button
+                  className="w-full"
+                  onClick={() => handleAcceptRequest(request.short_id)}
+                  disabled={acceptingId === request.short_id}
+                >
+                  {acceptingId === request.short_id ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Accepting...
+                    </>
+                  ) : (
+                    <>
+                      <Heart className="w-4 h-4 mr-2" />
+                      Accept & Donate
+                    </>
+                  )}
+                </Button>
+              )}
+
                   </CardFooter>
                 </Card>
               );

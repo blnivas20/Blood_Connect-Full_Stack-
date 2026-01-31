@@ -5,7 +5,6 @@ from api.serializers.request import RequestSerializer
 
 class RequestListCreateView(generics.ListCreateAPIView):
     serializer_class = RequestSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # Exclude own requests
@@ -22,4 +21,3 @@ class RequestDetailView(generics.RetrieveAPIView):
     queryset = Request.objects.all()
     serializer_class = RequestSerializer
     lookup_field = "short_id"
-    permission_classes = [IsAuthenticated]
