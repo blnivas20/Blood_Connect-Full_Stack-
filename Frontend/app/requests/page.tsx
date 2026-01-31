@@ -39,11 +39,10 @@ import {
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 const URGENCY_LEVELS = [
-  { value: "critical", label: "Critical - Need within hours" },
-  { value: "high", label: "High - Need within 24 hours" },
-  { value: "medium", label: "Medium - Need within 2-3 days" },
-  { value: "low", label: "Low - Scheduled requirement" },
+  { value: "Emergency", label: "Emergency - Immediate requirement" },
+  { value: "Not Urgent", label: "Not Urgent - Planned requirement" },
 ];
+
 
 function RequestBloodContent() {
   const { user } = useAuth();
@@ -51,7 +50,6 @@ function RequestBloodContent() {
 
   // Form state
   const [isForSelf, setIsForSelf] = useState(true);
-  const [requesterName, setRequesterName] = useState("");
   const [patientName, setPatientName] = useState("");
   const [patientAge, setPatientAge] = useState("");
   const [bloodGroup, setBloodGroup] = useState("");
@@ -68,7 +66,6 @@ function RequestBloodContent() {
   // Auto-fill user details when "for self" is selected
   useEffect(() => {
     if (isForSelf && user) {
-      setRequesterName(user.username || "");
       setPatientName(user.username || "");
       setBloodGroup(user.blood_group || "");
       setContactPhone(user.phone || "");
@@ -79,6 +76,9 @@ function RequestBloodContent() {
       setPatientName("");
       setPatientAge("");
       setBloodGroup("");
+      setLocation("");
+      setContactPhone("");
+      setBloodGroup("");
     }
   }, [isForSelf, user]);
 
@@ -87,7 +87,7 @@ function RequestBloodContent() {
       const response = await api.get("/profile/me/");
       const profile = response.data;
       if (isForSelf) {
-        setLocation(profile.city || "");
+        setLocation(profile.location || "");
         setContactPhone(profile.phone || "");
         setBloodGroup(profile.blood_group || "");
       }
@@ -98,10 +98,6 @@ function RequestBloodContent() {
 
   // Validate form
   const validateForm = () => {
-    if (!requesterName.trim()) {
-      setError("Please enter requester name");
-      return false;
-    }
     if (!patientName.trim()) {
       setError("Please enter patient name");
       return false;
@@ -144,16 +140,15 @@ function RequestBloodContent() {
 
     try {
       await api.post("/requests/", {
-        requester_name: requesterName,
         patient_name: patientName,
         patient_age: parseInt(patientAge),
         blood_group: bloodGroup,
-        urgency: urgency,
+        urgency: urgency,        // "Emergency" | "Not Urgent"
         location: location,
         pincode: pincode,
         reason: reason,
-        contact_phone: contactPhone,
       });
+
 
       setSuccess(true);
       // Redirect to become-donor page after 2 seconds
@@ -263,21 +258,6 @@ function RequestBloodContent() {
                 <Switch
                   checked={!isForSelf}
                   onCheckedChange={(checked) => setIsForSelf(!checked)}
-                />
-              </div>
-
-              {/* Requester Name */}
-              <div className="space-y-2">
-                <Label htmlFor="requesterName">
-                  Requester Name <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="requesterName"
-                  type="text"
-                  placeholder="Your name"
-                  value={requesterName}
-                  onChange={(e) => setRequesterName(e.target.value)}
-                  disabled={isLoading}
                 />
               </div>
 
