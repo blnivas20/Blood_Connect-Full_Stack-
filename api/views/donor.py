@@ -38,12 +38,22 @@ class AcceptRequestView(APIView):
 
 class AcceptedDonorListView(ListAPIView):
     serializer_class = AcceptedDonorSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        short_id = self.kwargs["short_id"]
-        return AcceptedDonor.objects.filter(
-            request__short_id=short_id,
-            request__requester=self.request.user
+        # short_id = self.kwargs["short_id"]
+
+        return (
+            AcceptedDonor.objects
+            .filter(
+                # request__short_id=short_id,
+                request__requester=self.request.user,
+                status="Pending"   # or include Finalized if needed
+            )
+            .select_related(
+                "donor",
+                "donor__profile"
+            )
         )
 
 class FinalizeDonorView(APIView):

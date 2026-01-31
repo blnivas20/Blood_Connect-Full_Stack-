@@ -18,6 +18,6 @@ urlpatterns = [
     path("requests/", RequestListCreateView.as_view()),
     path("requests/<str:short_id>/", RequestDetailView.as_view()),
     path("requests/<str:short_id>/accept/", AcceptRequestView.as_view()),
-    path("requests/<str:short_id>/donors/",AcceptedDonorListView.as_view()),
+    path("/requests/donors/",AcceptedDonorListView.as_view()),
     path("donors/<str:unique_id>/finalize/",FinalizeDonorView.as_view()),
 ]
