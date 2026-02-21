@@ -147,7 +147,7 @@ export function ChatWindow() {
     }
 
     const socket = new WebSocket(
-      `ws://localhost:8000/ws/chat/${activeChat.unique_id}/?token=${token}`
+      `wss://your-backend.onrender.com/ws/chat/${activeChat.unique_id}/?token=${token}`
     );
     socketRef.current = socket;
 
