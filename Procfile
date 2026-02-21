@@ -1,0 +1,1 @@
+web: gunicorn bloodconnect.asgi:application -k uvicorn.workers.UvicornWorker
