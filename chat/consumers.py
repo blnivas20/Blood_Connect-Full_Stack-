@@ -1,8 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from donations.models import AcceptedDonor
-from .models import ChatMessage
+
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -62,6 +61,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def is_user_allowed(self):
+        from donations.models import AcceptedDonor
+        from .models import ChatMessage        
         try:
             room = AcceptedDonor.objects.select_related(
                 "request", "donor"
@@ -82,6 +83,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def save_message(self, message):
+        from donations.models import AcceptedDonor
+        from .models import ChatMessage
         room = AcceptedDonor.objects.get(unique_id=self.room_id)
 
         ChatMessage.objects.create(
