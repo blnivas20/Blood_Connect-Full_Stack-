@@ -13,7 +13,7 @@ uvicorn
 
 psycopg2-binary
 dj-database-url
-
+shortuuid==1.0.13
 django-cors-headers
 whitenoise
 
