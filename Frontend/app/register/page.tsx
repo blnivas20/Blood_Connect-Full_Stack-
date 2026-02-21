@@ -33,7 +33,7 @@ export default function RegisterPage() {
 
   // Redirect if already authenticated
   if (isAuthenticated) {
-    router.push("/dashboard");
+    router.push("/register/complete");
     return null;
   }
 

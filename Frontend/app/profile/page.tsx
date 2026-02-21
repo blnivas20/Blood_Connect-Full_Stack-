@@ -41,7 +41,7 @@ function ProfileContent() {
   // Form states
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [city, setCity] = useState("");
+  const [location, setCity] = useState("");
   const [bloodGroup, setBloodGroup] = useState("");
   const [isDonor, setIsDonor] = useState(false);
 
@@ -60,7 +60,7 @@ function ProfileContent() {
         const data = response.data;
         setEmail(data.email || "");
         setPhone(data.phone || "");
-        setCity(data.city || "");
+        setCity(data.location || "");
         setBloodGroup(data.blood_group || "");
         setIsDonor(data.is_donor || false);
       } catch (err) {
@@ -85,9 +85,8 @@ function ProfileContent() {
       await api.patch("/profile/me/", {
         email,
         phone,
-        city,
+        location,
         blood_group: bloodGroup,
-        is_donor: isDonor,
       });
 
       // Refresh user data in context
@@ -158,18 +157,12 @@ function ProfileContent() {
                 )}
 
                 <div className="mt-4 w-full pt-4 border-t border-border">
-                  <p className="text-sm text-muted-foreground">Donor Status</p>
-                  <p
-                    className={`font-medium ${isDonor ? "text-green-600" : "text-muted-foreground"}`}
-                  >
-                    {isDonor ? "Active Donor" : "Not a Donor"}
-                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Edit Profile Form */}
+
           <Card className="md:col-span-2">
             <CardHeader>
               <CardTitle className="text-lg">Edit Profile</CardTitle>
@@ -250,7 +243,7 @@ function ProfileContent() {
                     <Input
                       id="city"
                       type="text"
-                      value={city}
+                      value={location}
                       onChange={(e) => setCity(e.target.value)}
                       placeholder="Your city"
                       className="pl-10"
@@ -280,23 +273,6 @@ function ProfileContent() {
                   </Select>
                 </div>
 
-                {/* Donor Status Toggle */}
-                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                  <div className="space-y-1">
-                    <Label htmlFor="isDonor" className="text-base font-medium">
-                      Register as Blood Donor
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      Make your profile visible to people seeking blood donors
-                    </p>
-                  </div>
-                  <Switch
-                    id="isDonor"
-                    checked={isDonor}
-                    onCheckedChange={setIsDonor}
-                    disabled={isLoading}
-                  />
-                </div>
 
                 {/* Submit Button */}
                 <Button type="submit" className="w-full" disabled={isLoading}>

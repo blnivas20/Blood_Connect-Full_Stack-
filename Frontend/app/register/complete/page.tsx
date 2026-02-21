@@ -43,8 +43,6 @@ export default function CompleteProfilePage() {
   const [bloodGroup, setBloodGroup] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
   const [lastDonationDate, setLastDonationDate] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -64,6 +62,8 @@ export default function CompleteProfilePage() {
     return phoneRegex.test(phoneNumber);
   };
 
+
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,21 +80,16 @@ export default function CompleteProfilePage() {
       return;
     }
 
-    if (!city) {
-      setError("Please enter your city");
-      return;
-    }
+
 
     setIsLoading(true);
 
     try {
       // Update user profile with additional details
-      await api.patch("/users/me/", {
+      await api.patch("/profile/me/", {
         blood_group: bloodGroup,
         phone: phone,
-        address: address,
-        city: city,
-        state: state,
+        location: address,
         last_donation_date: lastDonationDate || null,
       });
 
@@ -223,34 +218,6 @@ export default function CompleteProfilePage() {
                   onChange={(e) => setAddress(e.target.value)}
                   disabled={isLoading}
                 />
-              </div>
-
-              {/* City and State */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="city">
-                    City <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="city"
-                    type="text"
-                    placeholder="Your city"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="state">State</Label>
-                  <Input
-                    id="state"
-                    type="text"
-                    placeholder="Your state"
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    disabled={isLoading}
-                  />
-                </div>
               </div>
 
               {/* Last Donation Date */}

@@ -79,7 +79,7 @@ function DashboardContent() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
@@ -102,27 +102,11 @@ function DashboardContent() {
                 <div>
                   <p className="text-sm text-muted-foreground">Your Location</p>
                   <p className="text-2xl font-bold text-foreground">
-                    {user?.city || "Not Set"}
+                    {user?.location || "Not Set"}
                   </p>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                   <MapPin className="w-6 h-6 text-primary" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Donor Status</p>
-                  <p className="text-2xl font-bold text-foreground">
-                    {user?.is_donor ? "Active" : "Inactive"}
-                  </p>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <User className="w-6 h-6 text-primary" />
                 </div>
               </div>
             </CardContent>
@@ -153,8 +137,8 @@ function DashboardContent() {
               icon={Heart}
               title="Become a Donor"
               description="Register as a blood donor and start saving lives in your community"
-              href="/profile"
-              buttonText="Register Now"
+              href="/become-donor"
+              buttonText="Donate"
             />
           </div>
         </div>

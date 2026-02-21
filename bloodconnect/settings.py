@@ -25,12 +25,13 @@ SECRET_KEY = "django-insecure-fkfyxhet+u$v1tirwa0hhq1@twof^146$gz$0@lvo3*k0(yodb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost',"127.0.0.1"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -46,6 +47,9 @@ INSTALLED_APPS = [
     'chat',
     'api',
     'corsheaders',
+    
+    #chat section
+    'channels',
 
 ]
 
@@ -148,3 +152,11 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# chat implementation prerequisite
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}

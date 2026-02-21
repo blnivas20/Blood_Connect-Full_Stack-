@@ -9,6 +9,7 @@ from api.views.request import (
 from api.views.donor import (
     AcceptRequestView , AcceptedDonorListView , FinalizeDonorView
 )
+from api.views.chat import ChatMessageListView , ConversationListView
 
 urlpatterns = [
     path("auth/register/", RegisterView.as_view()),
@@ -16,8 +17,11 @@ urlpatterns = [
     path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("profile/me/", MyProfileView.as_view()),
     path("requests/", RequestListCreateView.as_view()),
+    path("requests/donors/",AcceptedDonorListView.as_view()),
     path("requests/<str:short_id>/", RequestDetailView.as_view()),
     path("requests/<str:short_id>/accept/", AcceptRequestView.as_view()),
-    path("/requests/donors/",AcceptedDonorListView.as_view()),
     path("donors/<str:unique_id>/finalize/",FinalizeDonorView.as_view()),
+    path("chat/conversations/",ConversationListView.as_view()),
+    path("chat/messages/<str:room_id>/" , ChatMessageListView.as_view()),
+    
 ]

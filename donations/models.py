@@ -102,5 +102,5 @@ class AcceptedDonor(models.Model):
     accepted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.donor.username} → {self.request.short_id}"
+        return f"{self.request.requester.username}, {self.donor.username} → {self.request.short_id}"
 

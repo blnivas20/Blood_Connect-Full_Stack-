@@ -41,20 +41,15 @@ class AcceptedDonorListView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # short_id = self.kwargs["short_id"]
+        queryset = AcceptedDonor.objects.filter(
+            request__requester=self.request.user,
+            status="Pending"
+        ).select_related("donor", "request").order_by("-accepted_at")
 
-        return (
-            AcceptedDonor.objects
-            .filter(
-                # request__short_id=short_id,
-                request__requester=self.request.user,
-                status="Pending"   # or include Finalized if needed
-            )
-            .select_related(
-                "donor",
-                "donor__profile"
-            )
-        )
+        for obj in queryset:
+            print(obj.unique_id, obj.donor.username , obj.request.blood_group)
+        
+        return queryset
 
 class FinalizeDonorView(APIView):
     permission_classes = [IsAuthenticated]

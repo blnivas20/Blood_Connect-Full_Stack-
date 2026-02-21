@@ -26,6 +26,7 @@ interface AcceptedDonor {
   request_id: number;
   request_blood_group: string;
   accepted_at: string;
+  unique_id: string;   // 🔥 ADD THIS
 }
 
 // Donor card component - simplified to show name, location and chat button
@@ -43,12 +44,16 @@ function DonorCard({
           {/* Donor Info */}
           <div className="flex items-center gap-3 min-w-0">
             {/* Avatar */}
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <User className="w-5 h-5 text-primary" />
-            </div>
+          <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
+            <span className="text-m font-semibold text-red-600 dark:text-red-400">
+              {donor.request_blood_group}
+            </span>
+          </div>
+              {/* <User className="w-5 h-5 text-primary" /> */}
 
             <div className="min-w-0">
               <h3 className="font-medium text-foreground truncate">
+
                 {donor.username}
               </h3>
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -107,6 +112,7 @@ function DonorsContent() {
       try {
         // API endpoint that returns donors who accepted the user's blood requests
         const response = await api.get("/requests/donors/");
+        console.log(response.data);
         setDonors(response.data);
       } catch (err) {
         console.error("Failed to fetch accepted donors:", err);
@@ -122,15 +128,17 @@ function DonorsContent() {
   }, [user]);
 
   // Start chat with a donor - dispatches custom event that ChatWindow listens to
-  const handleStartChat = (donor: AcceptedDonor) => {
-    const event = new CustomEvent("startChat", {
-      detail: {
-        id: donor.id,
-        username: donor.username,
-      },
-    });
-    window.dispatchEvent(event);
-  };
+const handleStartChat = (donor: AcceptedDonor) => {
+  const event = new CustomEvent("startChat", {
+    detail: {
+      id: donor.id,
+      username: donor.username,
+      unique_id: donor.unique_id,  // 🔥 THIS WAS MISSING
+    },
+  });
+
+  window.dispatchEvent(event);
+};
 
   return (
     <div className="min-h-screen bg-muted/30">
