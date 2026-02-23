@@ -132,7 +132,7 @@ Only compatible donors can accept.
 
 ## 1. Clone Repository
 ```
-git clone <your-repo-url>
+git clone https://github.com/blnivas20/Blood_Connect-Full_Stack- 
 cd bloodconnect
 ```
 
