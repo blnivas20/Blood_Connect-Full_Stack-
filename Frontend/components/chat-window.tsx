@@ -147,7 +147,7 @@ export function ChatWindow() {
     }
 
     const socket = new WebSocket(
-      `wss://your-backend.onrender.com/ws/chat/${activeChat.unique_id}/?token=${token}`
+      `wss://bloodconnect-eywo.onrender.com/ws/chat/${activeChat.unique_id}/?token=${token}`
     );
     socketRef.current = socket;
 

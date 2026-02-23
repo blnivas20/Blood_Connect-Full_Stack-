@@ -9,7 +9,10 @@ channels-redis
 daphne
 
 gunicorn
-uvicorn
+uvicorn[standard]
+websockets
+wsproto
+
 
 psycopg2-binary
 dj-database-url
