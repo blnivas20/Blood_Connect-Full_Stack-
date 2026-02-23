@@ -18,7 +18,7 @@ class ChatMessageListView(APIView):
 
         messages = ChatMessage.objects.filter(
             room=room
-        ).select_related("sender")
+        ).select_related("sender").order_by('timestamp')
 
         data = [
             {
