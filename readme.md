@@ -205,13 +205,3 @@ Built to deeply understand:
 - Production deployment workflows
 
 ---
-
-If you're reviewing this project, focus on:
-
-- Business logic enforcement
-- Request lifecycle modeling
-- Blood compatibility validation
-- WebSocket room architecture
-- Clean API structure
-
-This project is built with intention.
